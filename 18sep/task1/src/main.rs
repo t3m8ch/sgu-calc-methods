@@ -21,12 +21,12 @@ fn main() {
     println!("\nИнтерполяционный многолчен P_{n}");
     print_table(
         &x_list_with_midpoints,
-        &vandermonde_interpolation(n, &x_list_input, &f_list_input, &x_list_with_midpoints),
+        &vandermonde_interpolation(&x_list_input, &f_list_input, &x_list_with_midpoints),
     );
 
     println!("\nИнтерполяционный многолчен в форме Лагранжа l_{n}");
     print_table(
         &x_list_with_midpoints,
-        &lagrange_interpolation(n, &x_list_input, &f_list_input, &x_list_with_midpoints),
+        &lagrange_interpolation(&x_list_input, &f_list_input, &x_list_with_midpoints),
     );
 }

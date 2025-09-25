@@ -1,13 +1,10 @@
 use nalgebra::{DMatrix, DVector};
 
-pub fn vandermonde_interpolation(
-    n: u32,
-    x_list_input: &[f64],
-    f_list_input: &[f64],
-    x_list_with_midpoints: &[f64],
-) -> Vec<f64> {
-    let a_list = solve_matrix(n, x_list_input, f_list_input);
-    x_list_with_midpoints
+pub fn vandermonde_interpolation(x_nodes: &[f64], f_nodes: &[f64], x_targets: &[f64]) -> Vec<f64> {
+    // TODO: Validate len for x_nodes and f_nodes
+    let n = x_nodes.len();
+    let a_list = solve_matrix(n, x_nodes, f_nodes);
+    x_targets
         .iter()
         .map(|x| {
             a_list
@@ -19,7 +16,7 @@ pub fn vandermonde_interpolation(
         .collect()
 }
 
-fn solve_matrix(n: u32, x_list: &[f64], f_list: &[f64]) -> Vec<f64> {
+fn solve_matrix(n: usize, x_list: &[f64], f_list: &[f64]) -> Vec<f64> {
     let x_matrix: Vec<f64> = (0..=n)
         .into_iter()
         .map(|i| x_list.iter().map(move |x| x.powi(i as i32)))
@@ -32,7 +29,7 @@ fn solve_matrix(n: u32, x_list: &[f64], f_list: &[f64]) -> Vec<f64> {
     x_matrix
         .lu()
         .solve(&f_vector)
-        .expect("Failed to solve")
+        .expect("Failed to solve") // TODO: Change to Result
         .into_iter()
         .map(|a| *a)
         .collect()

@@ -1,18 +1,13 @@
-pub fn lagrange_interpolation(
-    n: u32,
-    x_list_input: &[f64],
-    f_list_input: &[f64],
-    x_list_with_midpoints: &[f64],
-) -> Vec<f64> {
-    x_list_with_midpoints
+pub fn lagrange_interpolation(x_nodes: &[f64], f_nodes: &[f64], x_targets: &[f64]) -> Vec<f64> {
+    x_targets
         .iter()
         .map(|x| {
-            f_list_input
+            f_nodes
                 .into_iter()
-                .zip(x_list_input)
+                .zip(x_nodes)
                 .enumerate()
                 .map(|(f_idx, (fk, xk))| {
-                    let x_list_without_k: Vec<f64> = x_list_input
+                    let x_list_without_k: Vec<f64> = x_nodes
                         .iter()
                         .enumerate()
                         .filter(|(x_idx, _)| *x_idx != f_idx)
