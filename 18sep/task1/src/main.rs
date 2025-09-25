@@ -52,13 +52,22 @@ fn main() {
         )
         .collect();
 
-    println!("x_interim_vector: {:#?}", x_interim_vector);
+    println!("\nИнтерполяционный многолчен P_{n}");
+    print_table(
+        &x_interim_vector,
+        &interpolation_polynomial(n, &xv_interpolated, &fv_interpolated, &x_interim_vector),
+    );
 
-    let f_vector =
-        interpolation_polynomial(n, &xv_interpolated, &fv_interpolated, &x_interim_vector);
-
-    println!("\nВыходная таблица");
-    print_table(&x_interim_vector, &f_vector);
+    println!("\nИнтерполяционный многолчен в форме Лагранжа l_{n}");
+    print_table(
+        &x_interim_vector,
+        &lagrange_interpolation_polynomial(
+            n,
+            &xv_interpolated,
+            &fv_interpolated,
+            &x_interim_vector,
+        ),
+    );
 }
 
 fn interpolation_polynomial(
@@ -84,6 +93,40 @@ fn interpolation_polynomial(
         .map(|x| {
             (0..=n)
                 .map(|i| x.powi(i as i32) * a_vector[(i as usize, 0)])
+                .sum()
+        })
+        .collect()
+}
+
+fn lagrange_interpolation_polynomial(
+    n: u32,
+    xv_interpolated: &[f64],
+    fv_interpolated: &[f64],
+    xv: &[f64],
+) -> Vec<f64> {
+    xv.iter()
+        .map(|x| {
+            fv_interpolated
+                .into_iter()
+                .zip(xv_interpolated)
+                .enumerate()
+                .map(|(f_idx, (fk, xk))| {
+                    let xv_interpolated: Vec<f64> = xv_interpolated
+                        .iter()
+                        .enumerate()
+                        .filter(|(x_idx, _)| *x_idx != f_idx)
+                        .map(|(_, xi)| *xi)
+                        .collect();
+
+                    fk * xv_interpolated
+                        .iter()
+                        .map(|xi| x - xi)
+                        .fold(1.0, |acc, m| acc * m)
+                        / xv_interpolated
+                            .iter()
+                            .map(|xi| xk - xi)
+                            .fold(1.0, |acc, m| acc * m)
+                })
                 .sum()
         })
         .collect()
