@@ -2,7 +2,7 @@ use nalgebra::{DMatrix, DVector};
 
 pub fn vandermonde_interpolation(x_nodes: &[f64], f_nodes: &[f64], x_targets: &[f64]) -> Vec<f64> {
     // TODO: Validate len for x_nodes and f_nodes
-    let n = x_nodes.len();
+    let n = x_nodes.len() - 1;
     let a_list = solve_matrix(n, x_nodes, f_nodes);
     x_targets
         .iter()
