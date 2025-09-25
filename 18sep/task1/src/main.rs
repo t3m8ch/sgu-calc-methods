@@ -16,13 +16,13 @@ fn main() {
     println!("\nИнтерполяционный многолчен P_{n}");
     print_table(
         &x_list_with_midpoints,
-        &interpolation_polynomial(n, &x_list_input, &f_list_input, &x_list_with_midpoints),
+        &vandermonde_interpolation(n, &x_list_input, &f_list_input, &x_list_with_midpoints),
     );
 
     println!("\nИнтерполяционный многолчен в форме Лагранжа l_{n}");
     print_table(
         &x_list_with_midpoints,
-        &lagrange_interpolation_polynomial(n, &x_list_input, &f_list_input, &x_list_with_midpoints),
+        &lagrange_interpolation(n, &x_list_input, &f_list_input, &x_list_with_midpoints),
     );
 }
 
@@ -40,7 +40,7 @@ fn x_list_with_midpoints(x_list: &[f64]) -> Vec<f64> {
         .collect()
 }
 
-fn interpolation_polynomial(
+fn vandermonde_interpolation(
     n: u32,
     xv_interpolated: &[f64],
     fv_interpolated: &[f64],
@@ -64,7 +64,7 @@ fn interpolation_polynomial(
         .collect()
 }
 
-fn lagrange_interpolation_polynomial(
+fn lagrange_interpolation(
     n: u32,
     xv_interpolated: &[f64],
     fv_interpolated: &[f64],
