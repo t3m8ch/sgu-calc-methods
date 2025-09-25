@@ -84,11 +84,7 @@ fn interpolation_polynomial(
     let x_matrix = DMatrix::from_vec((n + 1) as usize, (n + 1) as usize, x_matrix);
     let f_vector = DVector::from_row_slice(fv_interpolated);
 
-    let Some(a_vector) = x_matrix.lu().solve(&f_vector) else {
-        // TODO: Remove panic
-        panic!("Система не имеет решений!");
-    };
-
+    let a_vector = x_matrix.lu().solve(&f_vector).expect("Failed to solve");
     xv.iter()
         .map(|x| {
             (0..=n)
