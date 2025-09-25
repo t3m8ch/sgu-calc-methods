@@ -4,70 +4,40 @@ use comfy_table::Table;
 use nalgebra::{DMatrix, DVector};
 
 fn main() {
-    let mut n = String::new();
-
-    print!("Введите число n: ");
-    io::stdout().flush().expect("Failed to flush");
-    io::stdin().read_line(&mut n).expect("Failed to read line");
-
-    let n: u32 = n.trim().parse().expect("Failed to parse n");
-
-    let mut xv_interpolated = Vec::new();
-    let mut fv_interpolated = Vec::new();
-
-    for i in 0..=n {
-        let mut x = String::new();
-
-        print!("Введите x{i}: ");
-        io::stdout().flush().expect("Failed to flush");
-        io::stdin().read_line(&mut x).expect("Failed to read line");
-        let x: f64 = x.trim().parse().expect("Failed to parse x");
-
-        xv_interpolated.push(x);
-    }
-
-    for i in 0..=n {
-        let mut f = String::new();
-
-        print!("Введите f{i}: ");
-        io::stdout().flush().expect("Failed to flush");
-        io::stdin().read_line(&mut f).expect("Failed to read line");
-        let f: f64 = f.trim().parse().expect("Failed to parse f");
-
-        fv_interpolated.push(f);
-    }
+    let n = input_n();
+    let x_list_input = input_vector(n, "x");
+    let f_list_input = input_vector(n, "f");
 
     println!("\nВходная таблица:");
-    print_table(&xv_interpolated, &fv_interpolated);
+    print_table(&x_list_input, &f_list_input);
 
-    let x_interim_vector: Vec<f64> = [xv_interpolated[0]]
-        .into_iter()
-        .chain(
-            xv_interpolated
-                .iter()
-                .skip(1)
-                .zip(xv_interpolated.iter())
-                .map(|(x0, x1)| [(x0 + x1) / 2.0, *x0])
-                .flatten(),
-        )
-        .collect();
+    let x_list_with_midpoints = x_list_with_midpoints(&x_list_input);
 
     println!("\nИнтерполяционный многолчен P_{n}");
     print_table(
-        &x_interim_vector,
-        &interpolation_polynomial(n, &xv_interpolated, &fv_interpolated, &x_interim_vector),
+        &x_list_with_midpoints,
+        &interpolation_polynomial(n, &x_list_input, &f_list_input, &x_list_with_midpoints),
     );
 
     println!("\nИнтерполяционный многолчен в форме Лагранжа l_{n}");
     print_table(
-        &x_interim_vector,
-        &lagrange_interpolation_polynomial(
-            n,
-            &xv_interpolated,
-            &fv_interpolated,
-            &x_interim_vector,
-        ),
+        &x_list_with_midpoints,
+        &lagrange_interpolation_polynomial(n, &x_list_input, &f_list_input, &x_list_with_midpoints),
     );
+}
+
+fn x_list_with_midpoints(x_list: &[f64]) -> Vec<f64> {
+    [x_list[0]]
+        .into_iter()
+        .chain(
+            x_list
+                .iter()
+                .skip(1)
+                .zip(x_list.iter())
+                .map(|(x0, x1)| [(x0 + x1) / 2.0, *x0])
+                .flatten(),
+        )
+        .collect()
 }
 
 fn interpolation_polynomial(
@@ -126,6 +96,33 @@ fn lagrange_interpolation_polynomial(
                 .sum()
         })
         .collect()
+}
+
+fn input_n() -> u32 {
+    let mut n = String::new();
+
+    print!("Введите число n: ");
+    io::stdout().flush().expect("Failed to flush");
+    io::stdin().read_line(&mut n).expect("Failed to read line");
+
+    n.trim().parse().expect("Failed to parse n")
+}
+
+fn input_vector(n: u32, letter: &str) -> Vec<f64> {
+    let mut result = Vec::new();
+
+    for i in 0..=n {
+        let mut x = String::new();
+
+        print!("Введите {letter}_{i}: ");
+        io::stdout().flush().expect("Failed to flush");
+        io::stdin().read_line(&mut x).expect("Failed to read line");
+        let x: f64 = x.trim().parse().expect("Failed to parse x");
+
+        result.push(x);
+    }
+
+    result
 }
 
 fn print_table(xs: &[f64], fs: &[f64]) {
