@@ -1,6 +1,7 @@
 use std::io::{self, Write};
 
 use comfy_table::Table;
+use itertools::Itertools;
 use nalgebra::{DMatrix, DVector};
 
 fn main() {
@@ -27,16 +28,11 @@ fn main() {
 }
 
 fn x_list_with_midpoints(x_list: &[f64]) -> Vec<f64> {
-    [x_list[0]]
-        .into_iter()
-        .chain(
-            x_list
-                .iter()
-                .skip(1)
-                .zip(x_list.iter())
-                .map(|(x0, x1)| [(x0 + x1) / 2.0, *x0])
-                .flatten(),
-        )
+    x_list
+        .iter()
+        .tuple_windows()
+        .flat_map(|(x0, x1)| [*x0, (x0 + x1) / 2.0])
+        .chain(x_list.last().copied())
         .collect()
 }
 
