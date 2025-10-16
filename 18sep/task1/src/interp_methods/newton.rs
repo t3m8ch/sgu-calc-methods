@@ -1,4 +1,4 @@
-pub fn neuton_interpolation(x_nodes: &[f64], f_nodes: &[f64], x_targets: &[f64]) -> Vec<f64> {
+pub fn newton_interpolation(x_nodes: &[f64], f_nodes: &[f64], x_targets: &[f64]) -> Vec<f64> {
     let diffs = separated_differences(x_nodes, f_nodes);
     x_targets
         .iter()
