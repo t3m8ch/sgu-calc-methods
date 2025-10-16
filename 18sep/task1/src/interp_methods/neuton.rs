@@ -8,12 +8,11 @@ fn separated_differences(x_nodes: &[f64], f_nodes: &[f64]) -> Vec<Vec<f64>> {
     diffs.push(f_nodes.to_vec());
 
     for l in 1..=n {
-        let mut l_diffs = Vec::with_capacity(n - l + 1);
-        for k in 0..=n - l {
-            let l_min_1_diffs = &mut diffs[l - 1];
-            l_diffs.push((l_min_1_diffs[k + 1] - l_min_1_diffs[k]) / (x_nodes[k + l] - x_nodes[k]));
-        }
-        diffs.push(l_diffs);
+        diffs.push(
+            (0..=n - l)
+                .map(|k| (diffs[l - 1][k + 1] - diffs[l - 1][k]) / (x_nodes[k + l] - x_nodes[k]))
+                .collect(),
+        );
     }
 
     diffs
