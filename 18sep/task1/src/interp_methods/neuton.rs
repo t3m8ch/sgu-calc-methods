@@ -4,18 +4,14 @@ pub fn neuton_interpolation(x_nodes: &[f64], f_nodes: &[f64], x_targets: &[f64])
 
 fn separated_differences(x_nodes: &[f64], f_nodes: &[f64]) -> Vec<Vec<f64>> {
     let n = x_nodes.len() - 1;
-    let mut diffs = Vec::with_capacity(n + 1);
-    diffs.push(f_nodes.to_vec());
-
-    for l in 1..=n {
-        diffs.push(
+    (1..=n).fold(vec![f_nodes.to_vec()], |mut acc, l| {
+        acc.push(
             (0..=n - l)
-                .map(|k| (diffs[l - 1][k + 1] - diffs[l - 1][k]) / (x_nodes[k + l] - x_nodes[k]))
+                .map(|k| (acc[l - 1][k + 1] - acc[l - 1][k]) / (x_nodes[k + l] - x_nodes[k]))
                 .collect(),
         );
-    }
-
-    diffs
+        acc
+    })
 }
 
 #[cfg(test)]
