@@ -1,6 +1,9 @@
 use crate::{
     cli::{input_n, input_vector, print_table},
-    interp_methods::{lagrange::lagrange_interpolation, vandermonde::vandermonde_interpolation},
+    interp_methods::{
+        lagrange::lagrange_interpolation, neuton::neuton_interpolation,
+        vandermonde::vandermonde_interpolation,
+    },
     midpoints::x_list_with_midpoints,
 };
 
@@ -28,5 +31,11 @@ fn main() {
     print_table(
         &x_list_with_midpoints,
         &lagrange_interpolation(&x_list_input, &f_list_input, &x_list_with_midpoints),
+    );
+
+    println!("\nИнтерполяционный многолчен в форме Ньютона N_{n}");
+    print_table(
+        &x_list_with_midpoints,
+        &neuton_interpolation(&x_list_input, &f_list_input, &x_list_with_midpoints),
     );
 }
