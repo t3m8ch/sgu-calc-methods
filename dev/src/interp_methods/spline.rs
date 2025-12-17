@@ -1,5 +1,7 @@
 use nalgebra::{DMatrix, DVector};
 
+use crate::cli::print_matrix;
+
 pub fn cubic_spline_interpolation(x_nodes: &[f64], f_nodes: &[f64], x_targets: &[f64]) -> Vec<f64> {
     let (matrix_data, rhs_data) = build_spline_system(x_nodes, f_nodes);
     let n = x_nodes.len() - 1;
@@ -103,21 +105,6 @@ fn evaluate_spline(x: f64, x_nodes: &[f64], coefficients: &[[f64; 4]]) -> f64 {
     let dx = x - x_nodes[interval];
 
     a + b * dx + c * dx.powi(2) + d * dx.powi(3)
-}
-
-fn print_matrix(data: &[f64], rows: usize, cols: usize) {
-    for i in 0..rows {
-        print!("  [");
-        for j in 0..cols {
-            let val = data[i * cols + j];
-            if val.abs() < 1e-10 {
-                print!("{:7.1}", 0.0);
-            } else {
-                print!("{:7.2}", val);
-            }
-        }
-        println!(" ]");
-    }
 }
 
 #[cfg(test)]

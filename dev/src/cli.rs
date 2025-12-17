@@ -46,3 +46,18 @@ pub fn print_table(xs: &[f64], fs: &[f64]) {
 
     println!("{output_table}");
 }
+
+pub fn print_matrix(data: &[f64], rows: usize, cols: usize) {
+    for i in 0..rows {
+        print!("  [");
+        for j in 0..cols {
+            let val = data[i * cols + j];
+            if val.abs() < 1e-10 {
+                print!("{:7.1}", 0.0);
+            } else {
+                print!("{:7.2}", val);
+            }
+        }
+        println!(" ]");
+    }
+}
