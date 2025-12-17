@@ -29,6 +29,28 @@ pub fn input_vector(n: u32, letter: &str) -> Vec<f64> {
     result
 }
 
+pub fn input_matrix(n: u32) -> Vec<f64> {
+    let mut result = Vec::with_capacity((n * n) as usize);
+
+    for i in 0..=n {
+        let mut line = String::new();
+
+        print!("Введите строку {i}: ");
+        io::stdout().flush().expect("Failed to flush");
+        io::stdin()
+            .read_line(&mut line)
+            .expect("Failed to read line");
+        let line: Vec<f64> = line
+            .split_whitespace()
+            .map(|x| x.parse().expect("Failed to parse x"))
+            .collect();
+
+        result.extend(line);
+    }
+
+    result
+}
+
 pub fn print_table(xs: &[f64], fs: &[f64]) {
     let mut output_table = Table::new();
     output_table.set_header(

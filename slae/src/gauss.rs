@@ -1,44 +1,27 @@
 use shared::cli::print_matrix;
 
-pub fn solve_slae(matrix: &[f64], b: &[f64]) -> Vec<f64> {
+pub fn solve_slae_gauss(matrix: &[f64], b: &[f64]) -> Vec<f64> {
     let n = b.len();
 
     let mut a = matrix.to_vec();
     let mut b_work = b.to_vec();
 
-    println!("1) Матрица A:");
+    println!("Матрица A:");
     print_matrix(&a, n, n);
 
     let det = calculate_determinant(&a, n);
     println!("\nОпределитель матрицы A = {:.6}", det);
 
-    println!("\nКолонка b:");
-    b.iter().enumerate().for_each(|(i, &val)| {
-        println!("[ {:.2} ]", val);
-    });
+    println!("\nКолонка b: {:?}", b);
 
     forward_elimination(&mut a, &mut b_work, n);
 
     println!("\nМатрица после прямого прохода:");
     print_matrix(&a, n, n);
 
-    println!("\nВектор b после прямого прохода:");
-    b_work.iter().for_each(|&val| {
-        println!("[ {:.6} ]", val);
-    });
+    println!("\nВектор b после прямого прохода: {:.6?}", b_work);
 
     let solution = backward_substitution(&a, &b_work, n);
-
-    println!("\nРешение (A|b) методом Гаусса");
-    println!("Вектор решения после обратного прохода:");
-    solution.iter().enumerate().for_each(|(i, &val)| {
-        println!("x {} = {:.6}", i, val);
-    });
-
-    println!("\n4) x =");
-    solution.iter().for_each(|&val| {
-        println!("[ {:.6} ]", val);
-    });
 
     solution
 }
