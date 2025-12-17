@@ -3,3 +3,6 @@ interp:
 
 slae:
     cat input_slae.txt | cargo run -p slae
+
+something:
+    cat input_something.txt | cargo run -p something

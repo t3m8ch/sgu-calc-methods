@@ -1,2 +1,2 @@
 [workspace]
-members = ["interp-methods", "shared", "slae"]
+members = ["interp-methods", "shared", "slae", "something"]

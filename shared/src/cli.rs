@@ -12,6 +12,16 @@ pub fn input_n() -> u32 {
     n.trim().parse().expect("Failed to parse n")
 }
 
+pub fn input_v() -> f64 {
+    let mut v = String::new();
+
+    print!("Введите число v: ");
+    io::stdout().flush().expect("Failed to flush");
+    io::stdin().read_line(&mut v).expect("Failed to read line");
+
+    v.trim().parse().expect("Failed to parse v")
+}
+
 pub fn input_vector(n: u32, letter: &str) -> Vec<f64> {
     let mut result = Vec::new();
 
