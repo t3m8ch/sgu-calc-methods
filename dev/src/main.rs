@@ -10,6 +10,7 @@ use crate::{
 mod cli;
 mod interp_methods;
 mod midpoints;
+mod slae;
 
 fn main() {
     let n = input_n();
