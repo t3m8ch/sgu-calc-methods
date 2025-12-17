@@ -1,8 +1,9 @@
 use shared::cli::{input_matrix, input_n, input_vector};
 
-use crate::{gauss::solve_slae_gauss, tridiagonal::solve_tridiagonal};
+use crate::{gauss::solve_slae_gauss, iterative::solve_iterative, tridiagonal::solve_tridiagonal};
 
 mod gauss;
+mod iterative;
 mod tridiagonal;
 
 fn main() {
@@ -19,4 +20,14 @@ fn main() {
     let b = input_vector(n - 1, "b");
 
     println!("\nРешение: {:.10?}", solve_tridiagonal(&matrix, &b));
+
+    println!("\n\n=== Метод простой итерации ===");
+    let n = input_n();
+    let matrix = input_matrix(n - 1);
+    let b = input_vector(n - 1, "b");
+
+    println!(
+        "\nРешение: {:.10?}",
+        solve_iterative(&matrix, &b, 10e-9, 17)
+    );
 }

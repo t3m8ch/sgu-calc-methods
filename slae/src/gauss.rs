@@ -50,7 +50,7 @@ fn backward_substitution(u: &[f64], b: &[f64], n: usize) -> Vec<f64> {
     })
 }
 
-fn calculate_determinant(matrix: &[f64], n: usize) -> f64 {
+pub fn calculate_determinant(matrix: &[f64], n: usize) -> f64 {
     let mut a = matrix.to_vec();
     let mut det = 1.0;
 
