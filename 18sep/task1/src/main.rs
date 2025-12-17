@@ -2,7 +2,7 @@ use crate::{
     cli::{input_n, input_vector, print_table},
     interp_methods::{
         lagrange::lagrange_interpolation, newton::newton_interpolation,
-        vandermonde::vandermonde_interpolation,
+        spline::cubic_spline_interpolation, vandermonde::vandermonde_interpolation,
     },
     midpoints::x_list_with_midpoints,
 };
@@ -37,5 +37,11 @@ fn main() {
     print_table(
         &x_list_with_midpoints,
         &newton_interpolation(&x_list_input, &f_list_input, &x_list_with_midpoints),
+    );
+
+    println!("\nИнтерполяция кубическими сплайнами");
+    print_table(
+        &x_list_with_midpoints,
+        &cubic_spline_interpolation(&x_list_input, &f_list_input, &x_list_with_midpoints),
     );
 }
