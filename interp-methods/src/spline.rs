@@ -1,6 +1,5 @@
 use nalgebra::{DMatrix, DVector};
-
-use crate::cli::print_matrix;
+use shared::cli::print_matrix;
 
 pub fn cubic_spline_interpolation(x_nodes: &[f64], f_nodes: &[f64], x_targets: &[f64]) -> Vec<f64> {
     let (matrix_data, rhs_data) = build_spline_system(x_nodes, f_nodes);

@@ -1,4 +1,4 @@
-use crate::cli::print_matrix;
+use shared::cli::print_matrix;
 
 pub fn solve_slae(matrix: &[f64], b: &[f64]) -> Vec<f64> {
     let n = b.len();

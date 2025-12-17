@@ -5,7 +5,7 @@ pub fn newton_interpolation(x_nodes: &[f64], f_nodes: &[f64], x_targets: &[f64])
         .map(|x| {
             f_nodes[0]
                 + (1..x_nodes.len())
-                    .map(|i| diffs[i][0] * (0..=i - 1).map(|j| (x - x_nodes[j])).product::<f64>())
+                    .map(|i| diffs[i][0] * (0..=i - 1).map(|j| x - x_nodes[j]).product::<f64>())
                     .sum::<f64>()
         })
         .collect()

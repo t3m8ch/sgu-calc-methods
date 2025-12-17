@@ -1,16 +1,17 @@
-use crate::{
+use shared::{
     cli::{input_n, input_vector, print_table},
-    interp_methods::{
-        lagrange::lagrange_interpolation, newton::newton_interpolation,
-        spline::cubic_spline_interpolation, vandermonde::vandermonde_interpolation,
-    },
     midpoints::x_list_with_midpoints,
 };
 
-mod cli;
-mod interp_methods;
-mod midpoints;
-mod slae;
+use crate::{
+    lagrange::lagrange_interpolation, newton::newton_interpolation,
+    spline::cubic_spline_interpolation, vandermonde::vandermonde_interpolation,
+};
+
+mod lagrange;
+mod newton;
+mod spline;
+mod vandermonde;
 
 fn main() {
     let n = input_n();
