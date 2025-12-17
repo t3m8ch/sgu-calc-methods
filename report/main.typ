@@ -4,7 +4,7 @@
   type: "pract",
   info: (
       author: (
-        name: [ФИО],
+        name: [Кудяков Артём Александрович],
         faculty: [компьютерных наук и информационных технологий],
         group: "351",
         sex: "male"
@@ -36,11 +36,54 @@
 *Код*
 
 ```rust
+use nalgebra::{DMatrix, DVector};
+
+pub fn vandermonde_interpolation(x_nodes: &[f64],
+                                 f_nodes: &[f64],
+                                 x_targets: &[f64]) -> Vec<f64> {
+    let n = x_nodes.len() - 1;
+    let a_list = solve_matrix(n, x_nodes, f_nodes);
+    x_targets
+        .iter()
+        .map(|x| {
+            a_list
+                .iter()
+                .enumerate()
+                .map(|(i, a_i)| x.powi(i as i32) * a_i)
+                .sum()
+        })
+        .collect()
+}
+
+fn solve_matrix(n: usize, x_list: &[f64], f_list: &[f64]) -> Vec<f64> {
+    let x_matrix: Vec<f64> = (0..=n)
+        .into_iter()
+        .map(|i| x_list.iter().map(move |x| x.powi(i as i32)))
+        .flatten()
+        .collect();
+
+    let x_matrix = DMatrix::from_vec((n + 1) as usize, (n + 1) as usize, x_matrix);
+    let f_vector = DVector::from_row_slice(f_list);
+
+    x_matrix
+        .lu()
+        .solve(&f_vector)
+        .expect("Failed to solve")
+        .into_iter()
+        .map(|a| *a)
+        .collect()
+}
 ```
 
 *Результат*
 
 ```
+Интерполяционный многолчен P_3
++---+---+-------+---+-------+---+--------+----+
+| x | 0 | 0.5   | 1 | 1.5   | 2 | 2.5    | 3  |
++=============================================+
+| f | 1 | 1.125 | 2 | 4.375 | 9 | 16.625 | 28 |
++---+---+-------+---+-------+---+--------+----+
 ```
 
 
@@ -57,11 +100,39 @@
 *Код*
 
 ```rust
+pub fn lagrange_interpolation(x_nodes: &[f64],
+                              f_nodes: &[f64],
+                              x_targets: &[f64]) -> Vec<f64> {
+    x_targets
+        .iter()
+        .map(|x| {
+            f_nodes
+                .into_iter()
+                .zip(x_nodes)
+                .enumerate()
+                .map(|(k, (fk, xk))| {
+                    let x_list_without_k = x_nodes[..k].iter().chain(&x_nodes[k + 1..]);
+
+                    let numerator: f64 = x_list_without_k.clone().map(|xi| x - xi).product();
+                    let denominator: f64 = x_list_without_k.map(|xi| xk - xi).product();
+
+                    fk * numerator / denominator
+                })
+                .sum()
+        })
+        .collect()
+}
 ```
 
 *Результат*
 
 ```
+Интерполяционный многолчен в форме Лагранжа l_3
++---+---+-------+---+-------+---+--------+----+
+| x | 0 | 0.5   | 1 | 1.5   | 2 | 2.5    | 3  |
++=============================================+
+| f | 1 | 1.125 | 2 | 4.375 | 9 | 16.625 | 28 |
++---+---+-------+---+-------+---+--------+----+
 ```
 
 
@@ -79,11 +150,41 @@
 *Код*
 
 ```rust
+pub fn newton_interpolation(x_nodes: &[f64], f_nodes: &[f64], x_targets: &[f64]) -> Vec<f64> {
+    let diffs = separated_differences(x_nodes, f_nodes);
+    x_targets
+        .iter()
+        .map(|x| {
+            f_nodes[0]
+                + (1..x_nodes.len())
+                    .map(|i| diffs[i][0] * (0..=i - 1).map(|j| (x - x_nodes[j])).product::<f64>())
+                    .sum::<f64>()
+        })
+        .collect()
+}
+
+fn separated_differences(x_nodes: &[f64], f_nodes: &[f64]) -> Vec<Vec<f64>> {
+    let n = x_nodes.len() - 1;
+    (1..=n).fold(vec![f_nodes.to_vec()], |mut acc, l| {
+        acc.push(
+            (0..=n - l)
+                .map(|k| (acc[l - 1][k + 1] - acc[l - 1][k]) / (x_nodes[k + l] - x_nodes[k]))
+                .collect(),
+        );
+        acc
+    })
+}
 ```
 
 *Результат*
 
 ```
+Интерполяционный многолчен в форме Ньютона N_3
++---+---+-------+---+-------+---+--------+----+
+| x | 0 | 0.5   | 1 | 1.5   | 2 | 2.5    | 3  |
++=============================================+
+| f | 1 | 1.125 | 2 | 4.375 | 9 | 16.625 | 28 |
++---+---+-------+---+-------+---+--------+----+
 ```
 
 
