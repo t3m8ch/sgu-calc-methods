@@ -1,6 +1,6 @@
 use comfy_table::Table;
 
-pub fn print_task_11(v: f64, num_points: usize) {
+pub fn print_task_12(v: f64, num_points: usize) {
     let (a, b) = (0.0, 1.0);
     let n = 3;
     let lambda = 1.0;
