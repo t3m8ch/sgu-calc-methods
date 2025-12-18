@@ -157,7 +157,9 @@ pub fn newton_interpolation(x_nodes: &[f64], f_nodes: &[f64], x_targets: &[f64])
         .map(|x| {
             f_nodes[0]
                 + (1..x_nodes.len())
-                    .map(|i| diffs[i][0] * (0..=i - 1).map(|j| (x - x_nodes[j])).product::<f64>())
+                    .map(|i| {
+                        diffs[i][0] * (0..=i - 1).map(|j| (x - x_nodes[j])).product::<f64>()
+                    })
                     .sum::<f64>()
         })
         .collect()
@@ -203,11 +205,15 @@ fn separated_differences(x_nodes: &[f64], f_nodes: &[f64]) -> Vec<Vec<f64>> {
 ```rust
 use nalgebra::{DMatrix, DVector};
 
-pub fn cubic_spline_interpolation(x_nodes: &[f64], f_nodes: &[f64], x_targets: &[f64]) -> Vec<f64> {
+pub fn cubic_spline_interpolation(x_nodes: &[f64],
+                                  f_nodes: &[f64],
+                                  x_targets: &[f64]) -> Vec<f64> {
     let (matrix_data, rhs_data) = build_spline_system(x_nodes, f_nodes);
     let n = x_nodes.len() - 1;
     let size = 4 * n;
+```
 
+```rust
     println!("Матрица системы ({}x{}):", size, size);
     print_matrix(&matrix_data, size, size);
 
@@ -270,7 +276,9 @@ fn build_spline_system(x_nodes: &[f64], f_nodes: &[f64]) -> (Vec<f64>, Vec<f64>)
         matrix[row * size + 4 * i + 3] = h[i].powi(3);
         rhs[row] = f_nodes[i + 1];
     });
+```
 
+```rust
     (0..n - 1).for_each(|i| {
         let row = 2 * n + i;
         matrix[row * size + 4 * i + 1] = 1.0;
@@ -334,7 +342,9 @@ fn evaluate_spline(x: f64, x_nodes: &[f64], coefficients: &[[f64; 4]]) -> f64 {
   Интервал 0: a=1.000000, b=0.200000, c=0.000000, d=0.800000
   Интервал 1: a=2.000000, b=2.600000, c=2.400000, d=2.000000
   Интервал 2: a=9.000000, b=13.400000, c=8.400000, d=-2.800000
+```
 
+```
 +---+---+--------------------+---+--------------------+---+-------+----+
 | x | 0 | 0.5                | 1 | 1.5                | 2 | 2.5   | 3  |
 +======================================================================+
@@ -395,7 +405,9 @@ fn forward_elimination(a: &mut [f64], b: &mut [f64], n: usize) {
     for k in 0..n - 1 {
         for i in k + 1..n {
             let factor = a[i * n + k] / a[k * n + k];
+```
 
+```rust
             for j in k + 1..n {
                 a[i * n + j] -= factor * a[k * n + j];
             }
@@ -458,7 +470,9 @@ fn calculate_determinant(matrix: &[f64], n: usize) -> f64 {
   [    0.0    0.0  12.00   0.12   0.12 ]
   [    0.0    0.0    0.0  13.00   0.13 ]
   [    0.0    0.0    0.0    0.0  13.99 ]
+```
 
+```
 Вектор b после прямого прохода: [10.000000, 10.890000, 11.762376, 12.617647, 13.456311]
 Решение: [0.961538, 0.961538, 0.961538, 0.961538, 0.961538]
 ```
@@ -521,7 +535,9 @@ fn forward_sweep(matrix: &[f64], b: &[f64], n: usize) -> (Vec<f64>, Vec<f64>) {
     let c0 = matrix[0 * n + 1];
     p[0] = -c0 / a0;
     q[0] = b[0] / a0;
+```
 
+```rust
     for i in 1..n - 1 {
         let a_i = matrix[i * n + i - 1];
         let b_i = matrix[i * n + i];
@@ -614,7 +630,10 @@ use shared::cli::print_matrix;
 
 use crate::gauss::calculate_determinant;
 
-pub fn solve_iterative(matrix: &[f64], b: &[f64], epsilon: f64, max_iterations: usize) -> Vec<f64> {
+pub fn solve_iterative(matrix: &[f64],
+                       b: &[f64],
+                       epsilon: f64,
+                       max_iterations: usize) -> Vec<f64> {
     let n = b.len();
 
     println!("Матрица A:");
@@ -649,7 +668,9 @@ pub fn solve_iterative(matrix: &[f64], b: &[f64], epsilon: f64, max_iterations: 
         print!("x^({}) = [ ", iteration + 1);
         xkp1.iter().for_each(|&val| print!("{:.10} ", val));
         println!("]");
+```
 
+```rust
         if norm_stop(&xk, &xkp1, epsilon) {
             println!("\nСходимость достигнута за {} итераций", iteration + 1);
             return xkp1;
@@ -712,7 +733,9 @@ fn norm_stop(xk: &[f64], xkp1: &[f64], epsilon: f64) -> bool {
   [   0.14   0.14   0.14   0.14  14.00 ]
 
 Определитель матрицы A: 240004.528860
+```
 
+```
 Столбец b: [10.00, 11.00, 12.00, 13.00, 14.00]
 
 Матрица alpha:
@@ -770,7 +793,9 @@ fn euler_method(x0: f64, y0: f64, h: f64, n: usize, v: f64) -> (Vec<f64>, Vec<f6
 
     (x, y)
 }
+```
 
+```rust
 pub fn improved_euler_method(x0: f64,
                              y0: f64,
                              h: f64,
@@ -825,7 +850,9 @@ pub fn print_task_9(v: f64) {
     let y_exact = |x: f64| v * x.powi(2) * (x - v);
     let p = |x: f64| -x.powi(2);
     let q = |x: f64| -x;
+```
 
+```rust
     let x: Vec<f64> = (0..=n).map(|i| x0 + i as f64 * h).collect();
     let exact: Vec<f64> = x.iter().map(|&xi| y_exact(xi)).collect();
 
@@ -939,14 +966,17 @@ pub fn print_task_10(v: f64, h: f64) {
 
     let y_exact = |x: f64| v * x.powi(2) * (x - v);
     let f =
-        |x: f64| 4.0 * v * x.powi(4) - 3.0 * v.powi(2) * x.powi(3) + 6.0 * v * x - 2.0 * v.powi(2);
+        |x: f64| 4.0 * v * x.powi(4)
+                 - 3.0 * v.powi(2) * x.powi(3)
+                 + 6.0 * v * x - 2.0 * v.powi(2);
     let p = |x: f64| x.powi(2);
     let q = |x: f64| x;
 
     let phi_k = |x: f64, k: i32| x.powi(k) * (x - v);
     let dphi_k = |x: f64, k: i32| (k + 1) as f64 * x.powi(k) - v * k as f64 * x.powi(k - 1);
     let ddphi_k = |x: f64, k: i32| {
-        k as f64 * (k + 1) as f64 * x.powi(k - 1) - v * k as f64 * (k - 1) as f64 * x.powi(k - 2)
+        k as f64 * (k + 1) as f64 * x.powi(k - 1)
+        - v * k as f64 * (k - 1) as f64 * x.powi(k - 2)
     };
 
     let xk: Vec<f64> = (0..=n).map(|i| i as f64 * h).collect();
@@ -954,7 +984,9 @@ pub fn print_task_10(v: f64, h: f64) {
     println!("Проверка точного решения:");
     let mut check_table = Table::new();
     check_table.set_header(vec!["x", "y_toch"]);
+```
 
+```rust
     for &x in &[0.0, 1.0, 2.0, 3.0, 4.0, 5.0] {
         if x <= v {
             check_table.add_row(vec![format!("{}", x), format!("{:.2}", y_exact(x))]);
@@ -1018,7 +1050,9 @@ pub fn print_task_10(v: f64, h: f64) {
     }
     println!("{result_table}");
 }
+```
 
+```rust
 fn gauss_with_pivot(a: &mut [Vec<f64>], b: &mut [f64]) -> Vec<f64> {
     let n = b.len();
 
@@ -1081,6 +1115,9 @@ fn gauss_with_pivot(a: &mut [Vec<f64>], b: &mut [f64]) -> Vec<f64> {
 | 1 | -90.00   |
 |---+----------|
 | 2 | -320.00  |
+```
+
+```
 |---+----------|
 | 3 | -630.00  |
 |---+----------|
@@ -1148,10 +1185,6 @@ fn gauss_with_pivot(a: &mut [Vec<f64>], b: &mut [f64]) -> Vec<f64> {
 $ y(x) + 1 * integral_0^1 (x t + x^2 t^2 + x^3 t^3) y(t) d t
   = V (4/3 x + 1/4 x^2 + 1/5 x^3) $
 
-= Решение интегральных уравнений при помощи метода квадратур:
-$ y(x) + 1 * integral_0^1 (x t + x^2 t^2 + x^3 t^3) y(t) d t
-  = V (4/3 x + 1/4 x^2 + 1/5 x^3) $
-
 *Код*
 
 ```rust
@@ -1182,7 +1215,9 @@ fn fredholm_solver(v: f64, rank: usize) -> (Vec<f64>, Vec<f64>, Vec<f64>, Vec<f6
     let mut system_matrix = vec![0.0; rank * rank];
     for i in 0..rank {
         for j in 0..rank {
-            system_matrix[i * rank + j] = if i == j { 1.0 } else { 0.0 } + alpha[i * rank + j];
+            system_matrix[i * rank + j] =
+                if i == j { 1.0 } else { 0.0 }
+                + alpha[i * rank + j];
         }
     }
 
@@ -1204,6 +1239,9 @@ fn fredholm_solver(v: f64, rank: usize) -> (Vec<f64>, Vec<f64>, Vec<f64>, Vec<f6
     let error: Vec<f64> = y_num
         .iter()
         .zip(y_exact.iter())
+```
+
+```rust
         .map(|(yn, ye)| (yn - ye).abs())
         .collect();
 
@@ -1254,7 +1292,8 @@ fn build_gamma(size: usize, v: f64) -> Vec<f64> {
     let mut gamma = vec![0.0; size];
 
     for i in 0..size {
-        gamma[i] = integrate_trapezoidal(|t| rhs_func(t, v) * basis_func(i, t), 0.0, 1.0, 1000);
+        gamma[i] = integrate_trapezoidal(|t| rhs_func(t, v)
+                   * basis_func(i, t), 0.0, 1.0, 1000);
     }
 
     gamma
@@ -1266,6 +1305,9 @@ pub fn solve_slae_silent(matrix: &[f64], b: &[f64]) -> Vec<f64> {
     let mut b_work = b.to_vec();
 
     forward_elimination(&mut a, &mut b_work, n);
+```
+
+```rust
     backward_substitution(&a, &b_work, n)
 }
 
@@ -1323,12 +1365,16 @@ fn backward_substitution(u: &[f64], b: &[f64], n: usize) -> Vec<f64> {
 +---------+---------+---------+-------------+
 ```
 
+= Решение интегральных уравнений при помощи метода квадратур:
+$ y(x) + 1 * integral_0^1 (x t + x^2 t^2 + x^3 t^3) y(t) d t
+  = V (4/3 x + 1/4 x^2 + 1/5 x^3) $
+
 *Код*
 
 ```rust
 use comfy_table::Table;
 
-pub fn print_task_11(v: f64, num_points: usize) {
+pub fn print_task_12(v: f64, num_points: usize) {
     let (a, b) = (0.0, 1.0);
     let n = 3;
     let lambda = 1.0;
@@ -1389,6 +1435,9 @@ pub fn print_task_11(v: f64, num_points: usize) {
             format!("{:.7}", y_ex),
             format!("{:.2e}", error),
         ]);
+```
+
+```rust
     }
 
     println!("{table}");
@@ -1452,6 +1501,9 @@ fn solve_linear_system(a: &[Vec<f64>], b: &[f64]) -> Vec<f64> {
 | 0.1111111 | 1.1111109 | 1.1111111  | 1.89e-7 |
 |-----------+-----------+------------+---------|
 | 0.2222222 | 2.2222217 | 2.2222222  | 4.99e-7 |
+```
+
+```
 |-----------+-----------+------------+---------|
 | 0.3333333 | 3.3333324 | 3.3333333  | 9.70e-7 |
 |-----------+-----------+------------+---------|
