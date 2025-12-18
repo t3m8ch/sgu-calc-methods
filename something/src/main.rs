@@ -1,10 +1,12 @@
 use shared::cli::input_v;
 
 use crate::{
-    task8::print_task_8, task9::print_task_9, task10::print_task_10, task12::print_task_12,
+    task8::print_task_8, task9::print_task_9, task10::print_task_10, task11::print_task_11,
+    task12::print_task_12,
 };
 
 mod task10;
+mod task11;
 mod task12;
 mod task8;
 mod task9;
@@ -21,6 +23,9 @@ fn main() {
     println!("\n=== Краевая задача методом неопределенных коэффициентов ===");
     print_task_10(v, 0.1);
 
-    println!("\n=== Решение интегрального уравнения ===");
+    println!("\n=== Решение интегрального уравнения методом неопределённых коэффициентов ===");
+    print_task_11(v);
+
+    println!("\n=== Решение интегрального уравнения методом квадратур ===");
     print_task_12(v, 10);
 }
